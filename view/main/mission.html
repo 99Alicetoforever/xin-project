@@ -1,0 +1,110 @@
+{% extends "layout.html" %}
+
+{%block main%}
+<div id="mission">
+    <div class="mission_box">
+        <div class="mis_menu">
+
+            <ul class="m_menu_ul">
+                <li class="all_li"><a href="/mission?num=2"   class="navs" >全部</a></li>
+                {% for type in Types %}
+                <li ><a href="/mission?tid={{type.tid}}"  class="navs " >{{type.tname}}</a></li>
+                {% endfor %}
+
+                <!--<li><a href="javascript:void(0);"  class="navs" >看电影</a></li>-->
+                <!--<li><a href="javascript:void(0);"  class="navs" >玩游戏</a></li>-->
+                <!--<li><a href="javascript:void(0);"  class="navs" >看漫画</a></li>-->
+                <!--<li><a href="javascript:void(0);"  class="navs" >看小说</a></li>-->
+            </ul>
+        </div>
+        <div class="mis_list">
+            <div class="zui">
+                <ul>
+                    <li class="m_new m_bgc"><a href="/mission?id=1">最新</a></li>
+                    <li class="m_hot" ><a href="javascript:;" onclick="showDiv(3)">最热</a></li>
+                    <li class="m_select"><a href="javascript:;">结算时间</a></li>
+                </ul>
+                <div class="sear_button">
+                    <input type="text" name="text" id="search_keyword" />
+                    <button id="btn_button" onclick="showTask()"></button>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div class="mis_list_box">
+                <div class="m_lists_b" id="m_lists_b">
+                    <ul style="display:block">
+                        {% for task in allTask %}
+                        <li class="all_dis m_spe_li"><a href="/{% if task.tname=='听音乐' %}detail_task1?skid={{task.skid}}{%else%}detail_task?skid={{task.skid}}{%endif%}">
+                            <p class="me_img"><img src="../../public{{task.pic}}" /></p>
+                            <div class="m_info">
+                                <p>{{task.title}}<label>{{task.tname}}</label></p>
+                                <span>佣金：<b><i>￥</i>{{task.price}}.00</b></span>
+                                <b class="m_price">{{task.num}}/</b>
+                            </div>
+                        </a></li>
+                        {% endfor %}
+
+                    </ul>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var lids=document.getElementById("m_lists_b").getElementsByTagName("ul");
+    //var navs=document.getElementsByClassName("navs");
+    function showDiv(n){
+        for(var i=0;i<=3;i++){  /*注意i=0和i=1区别,i=1会出错，比较index.js:showPic()*/
+            if(i==n-1){
+                lids[n-1].style.display="block";
+                // console.log(navs[n-1]);
+                //navs[n-1].className="actie";
+            }else{
+                lids[i].style.display="none";
+                // navs[i].className="actino";
+            }
+        }
+    }
+
+    $(function(){
+        var reg=/\?/;
+        var str=location.href;
+        var ttid=str.split("?")[1].split("=")[0];
+        if(reg.test(str)&&ttid=="tid"){
+            var lis=$(".m_menu_ul").find("li");
+            var num=str.split("?")[1].split("=")[1];
+            //console.log(num);
+            lis.eq(num-8).find("a").css("color","#ED5239");
+        }else if(reg.test(str)&&ttid=="num"){
+            $(".all_li").find("a").css("color","#ED5239");
+        }
+
+
+
+        var zui=$(".zui").find("li.m_new,li.m_hot");
+        //console.log(zui);
+        zui.on("click",function(){
+            $(this).addClass("m_bgc").siblings().removeClass("m_bgc");
+        });
+
+        var keyWord=$("#search_keyword");
+        keyWord.keydown(function(e){
+            if(e.keyCode==13){
+                showTask();
+            }
+        });
+    });
+
+    function showTask(){
+        var keyWord=$("#search_keyword").val();
+        location.href="/mission?keyWord="+keyWord+"";
+    }
+
+
+
+
+</script>
+{% include "page.html" %}
+{%endblock%}
